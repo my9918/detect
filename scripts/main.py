@@ -12,29 +12,30 @@ def detect_callback(data):
     global detect_value
     if detect_value is None:
        detect_value = data.data
-       print("first detect_value:",detect_value)
+       print("目標の姿勢:",detect_value)
        
 
     if detect_value < yaw_value: #停止
-        print("detect_value:",detect_value)
-        print("detect_value - yaw_value:",detect_value - yaw_value)        
-        print("first_yaw_value:",first_yaw_value)
+        print("目標の値:",detect_value)
+        print("目標の値 - 現在の値:",detect_value - yaw_value)        
+        print("開始時点の姿勢:",first_yaw_value)
        
-        print("yaw_value + first_yaw_value:",yaw_value - first_yaw_value)
+        print("現在の値 + 開始時点の姿勢:",yaw_value - first_yaw_value)
         twist.angular.x = 0.0
         twist.angular.z = 0.0
         pub.publish(twist)
-        rospy.signal_shutdown("Detection value exceeded yaw value!")
+        rospy.signal_shutdown("停止")
+        print("停止します")
 
     
     else: #目的角度まで旋回
         
-        print("detect_value:",detect_value)
+        print("目標の値:",detect_value)
 
         speed = 25 #deg/s目的の速度
         twist.angular.z = speed * 3.1415 / 180.0 #rad
         pub.publish(twist)
-        print("twist pub\ndetect_value - yaw_value:",detect_value - yaw_value)
+        print("旋回命令を出します\n目標の値 - 現在の値:",detect_value - yaw_value)
         print("#####################################################")
 
 
@@ -45,9 +46,9 @@ def yaw_callback(data):
     if yaw_value is None:
        yaw_value = data.data
        first_yaw_value = data.data
-       print("first_yaw_value:",first_yaw_value)
+       print("開始時点の姿勢:",first_yaw_value)
     yaw_value = data.data
-    print("yaw_value:",yaw_value)
+    print("現在の値:",yaw_value)
 
 
 

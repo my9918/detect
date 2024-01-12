@@ -11,7 +11,7 @@ def image_callback(msg):
     image = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
     
     # 画像の切り取り
-    image = image[161:432,319:1008]
+    #image = image[161:432,319:1008]
     #img = img_origin[649:1725,1281:4032]
     # 画像の表示
     cv2.imshow("Image", image)
