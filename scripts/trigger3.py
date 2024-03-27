@@ -23,13 +23,14 @@ def image_callback(msg):
     bridge = CvBridge()
     # ROSのイメージメッセージをOpenCVの画像に変換
     image_origin = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
-    #cv2.imwrite("detection.jpg", image_origin) #yoloででてくる生の画像：線なし切り抜いていない画像
+    cv2.imwrite("detection.jpg", image_origin) #yoloででてくる生の画像：線なし切り抜いていない画像
 
     image = image_origin
 
     
-    image = image[bbox.ymin:bbox.ymax,bbox.xmin:bbox.xmax]
+    image = image[400:460,150:550]
     #print("\nbbox.xmin",bbox.xmin,"\n")
+    #150,400 ;550,460
 
     height, width = image.shape[:2]
     edited_height = height *  0.2 #上から何％カットするか1.0で100％
@@ -42,6 +43,8 @@ def image_callback(msg):
     #エフェクト処理
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray,90,450,apertureSize = 3)
+    cv2.imwrite("edges.jpg", edges)
+
 
     lines = cv2.HoughLinesP(edges, rho=1, theta=np.pi/360, threshold=150, minLineLength=300, maxLineGap=70)
     for line in lines:
@@ -75,33 +78,30 @@ def image_callback(msg):
     print("detect_angle",detect_angle)
 
     # 受け取った値に加える
-    detect_angle_value = 45 #  detect_angle
+    detect_angle_value = -90 #  detect_angle
     print("detect_angle_value",detect_angle_value)
     # 新しい値をパブリッシュする
     pub.publish(detect_angle_value)
     crosswalk_detected = False
 
-def bounding_boxes_callback(msg):
-    global bounding_boxes,bbox,crosswalk_detected
+"""def bounding_boxes_callback(msg):
+    global bounding_boxes,bbox
     bounding_boxes = msg
     for bbox in msg.bounding_boxes:
-        if bbox.Class == 'crosswalk' and bbox.probability >= 0.3:
+        if bbox.Class == 'Crosswalk' and bbox.probability >= 0.1:
             #rospy.loginfo("Received BoundingBoxes")
             #rospy.loginfo("Received BoundingBoxes:\n%s", bounding_boxes)
-            #print("座標",bbox.xmin,bbox.ymin,bbox.ymax,bbox.xmax)
-            # 横断歩道が検出されたフラグをセット
-            crosswalk_detected = True
-            rospy.Subscriber("/yolov5/image_out", Image, image_callback)
-        else:
-            rospy.loginfo("NOOOO")
-
+            print("座標",bbox.xmin,bbox.ymin,bbox.ymax,bbox.xmax)
+            
+            rospy.Subscriber("/yolov5/image_out", Image, image_callback)#"""
 
     
 
 def main():
-    global pub  # pubをグローバル変数として使用することを明示
+    global pub,crosswalk_detected  # pubをグローバル変数として使用することを明示
     rospy.init_node('main', anonymous=True)
-    rospy.Subscriber('/yolov5/detections', BoundingBoxes, bounding_boxes_callback)
+    rospy.Subscriber("usb_cam/image_raw", Image, image_callback)
+    crosswalk_detected = True
     pub = rospy.Publisher('detect', Float64, queue_size=10)
 
     rospy.spin()

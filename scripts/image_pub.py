@@ -14,7 +14,7 @@ def publish_image():
     while not rospy.is_shutdown():
         try:
             # 画像を読み込む
-            image = cv2.imread('/home/galleria/raspicat_ws/src/detect/scripts/data/IMG_5794.JPG')
+            image = cv2.imread('raspicat_ws/src/detect/scripts/IMG_4122.JPG')
             image = cv2.resize(image, dsize=(1008,756)) 
             #image = cv2.resize(image, dsize=(1024,1024))
             # OpenCVの画像形式をROSのイメージメッセージに変換
