@@ -15,9 +15,10 @@ mainが文字通りメインとして使うYOLOにカメラ画像を食わせて
 まずlaunchをどちらか立ち上げる
 detectならimage_pub.pyを立ち上げて画像をパブリッシュしておく
 しっかりパブリッシュされているか確認したかったらimage_viewer.pyを使用
-
+　
 次にYOLOを起動するのだが
-
+YOLOv5_rosのyolov5_2.launchを起動する　v１は学習データが古く少ない
+yolov5_2.launch内の以下のコメントのようにカメラからの画像かパブリッシュした画像を使うのかを目的に合わせて選択
 
     <!-- ROS topics -->
     <!-- ここからどちらかを選びinput_image_topicを上書きする
@@ -25,3 +26,4 @@ detectならimage_pub.pyを立ち上げて画像をパブリッシュしてお�
     <arg name="input_image_topic" default="/image_topic"/>    
     -->
 
+起動後
